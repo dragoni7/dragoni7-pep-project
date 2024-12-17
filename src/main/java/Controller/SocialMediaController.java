@@ -63,7 +63,7 @@ public class SocialMediaController {
         if (account.getUsername() != "" && account.getPassword().length() > 3) {
             Account addedAccount = accountService.AddAccount(account);
 
-            if (addedAccount ==null) {
+            if (addedAccount == null) {
                 ctx.status(400);
             } else {
                 ctx.json(mapper.writeValueAsString(addedAccount)).status(200);
@@ -92,11 +92,13 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
 
         Message message = mapper.readValue(ctx.body(), Message.class);
-
         Account foundAccount = accountService.getAccount(message.getPosted_by());
-        int messageLength = message.getMessage_text().toCharArray().length;
 
-        if (foundAccount == null || messageLength > 255 || message.getMessage_text() == "") {
+        int messageLength = message.getMessage_text().toCharArray().length;
+        
+        boolean invalidRequest = foundAccount == null || messageLength > 255 || message.getMessage_text() == "";
+
+        if (invalidRequest) {
             ctx.status(400);
         }
         else {
